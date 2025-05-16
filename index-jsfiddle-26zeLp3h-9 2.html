@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Answer employee policy questions</title>
+
+  <style>
+    
+  </style>
+
+  
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Policy Chatbot</title>
+  <style>
+    body {
+      margin: 0;
+      background: #e9f0f5;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #chatbox {
+      width: 100%;
+      max-width: 600px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .message {
+      margin: 10px 0;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .bot {
+      flex-direction: row;
+    }
+
+    .user {
+      flex-direction: row-reverse;
+    }
+
+    .bubble {
+      max-width: 75%;
+      padding: 12px 15px;
+      border-radius: 20px;
+      line-height: 1.4;
+    }
+
+    .bot .bubble {
+      background: #f0f0f0;
+      color: #333;
+      border-bottom-left-radius: 0;
+    }
+
+    .user .bubble {
+      background: #007bff;
+      color: white;
+      border-bottom-right-radius: 0;
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      background: #007bff;
+      color: white;
+      font-weight: bold;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 10px;
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+
+    #input-area {
+      display: flex;
+      border-top: 1px solid #ddd;
+      padding: 10px;
+    }
+
+    #userInput {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      outline: none;
+    }
+
+    #sendBtn {
+      margin-left: 10px;
+      padding: 10px 16px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #sendBtn:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<div id="chatbox">
+  <div id="messages"></div>
+  <div id="input-area">
+    <input type="text" id="userInput" placeholder="Ask me a policy question..." />
+    <button id="sendBtn">Send</button>
+  </div>
+</div>
+
+<script>
+  const responderNames = ["Alex", "Priya", "Jordan", "Sam", "Neha", "Luis"];
+  const responder = responderNames[Math.floor(Math.random() * responderNames.length)];
+  const responderInitial = responder.charAt(0).toUpperCase();
+
+  const policyKeywords = [
+    { keywords: ["completion", "residency completion", "finishing program", "end of training", "graduation"], response: "Refer to the Guideline for Standards for Completion of the Family Medicine Residency Program." },
+    { keywords: ["reduction in program length", "shorten program", "less time", "accelerated training"], response: "Refer to the Guideline for Consideration for Reduction in Program Length." },
+    { keywords: ["part time residency", "reduced workload", "half time", "flexible schedule"], response: "Refer to the Guideline for Part-Time Residency Training Program." },
+    { keywords: ["academic attendance", "academic sessions", "classes", "core days", "required days"], response: "Refer to the Guideline for Resident Attendance at Academic Sessions." },
+    { keywords: ["protected time", "protected academic time", "dedicated time", "study time"], response: "Refer to the Guideline for Protected Academic Time." },
+    { keywords: ["stipend", "resident stipends", "payment", "salary", "financial support"], response: "Refer to the Guideline for Resident Stipends." },
+    { keywords: ["scholarly dissemination", "scholarship fund", "conference fund", "presentation funding"], response: "Refer to the Postgraduate Scholarly Dissemination Fund policy." },
+    { keywords: ["half-days back", "teaching practice", "clinic return time", "clinic schedule"], response: "Refer to the policy on 'Half-Days Back' while on Teaching Practice Rotations." },
+    { keywords: ["supervision", "direct observation", "clinical oversight", "faculty presence"], response: "Refer to the Guideline for Supervision and Direct Observation of Residents in Family Medicine." },
+    { keywords: ["modules", "online modules", "required modules", "learning modules"], response: "Refer to the Guideline for Online Modules for Residents." },
+    { keywords: ["fm-map", "assessment of progress", "medical expert", "map"], response: "Refer to the Writing the Family Medicine 'Medical Expert' Assessment of Progress (FM-MAP) Guidelines for Residents." },
+    { keywords: ["pgme assessment", "postgraduate assessment", "performance review"], response: "Refer to the Guidelines for the Assessment of Postgraduate Residents (PGME)." },
+    { keywords: ["outside elective", "external elective", "provincial elective", "national elective"], response: "Refer to the Elective Form - Outside the University of Toronto system (Provincial, National, International)." },
+    { keywords: ["global health elective", "international elective", "overseas elective", "international placement"], response: "Refer to the Elective Form - International Global Health Electives." },
+    { keywords: ["horizontal clinical training", "complementary training", "horizontal elective"], response: "Refer to the Elective Form for Complementary Horizontal Clinical Training Opportunities in the Family Medicine Residency Program." },
+    { keywords: ["research elective", "research project", "academic elective"], response: "Refer to the DFCM Postgraduate Research Elective Guideline." },
+    { keywords: ["resident wellness", "wellness", "well-being", "mental health", "support"], response: "Refer to the Resident Wellness Guideline." },
+    { keywords: ["health and safety", "safety", "injury", "risk", "hazard"], response: "Refer to the Postgraduate Trainee Health and Safety Guidelines (PGME)." },
+    { keywords: ["professional responsibilities", "responsibilities", "duties", "expectations"], response: "Refer to the Professional Responsibilities in Postgraduate Medical Education (CPSO)." },
+    { keywords: ["professional behaviour", "conduct", "etiquette", "attitude"], response: "Refer to the Standards of Professional Practice Behaviour for all Health Professional Students (PGME)." },
+    { keywords: ["intimidation", "harassment", "disruptive behaviour", "bullying", "abuse"], response: "Refer to the Guidelines Addressing Intimidation, Harassment and Other Kinds of Unprofessional or Disruptive Behaviour in PGME (HUEC & PGMEAC)." },
+    { keywords: ["internet use", "social media", "electronic networking", "online conduct", "posting online"], response: "Refer to the Guidelines for Appropriate Use of the Internet, Electronic Networking and Other Media (HUEC)." }
+  ];
+
+  let conversationEnded = false;
+  let waitingForFollowup = false;
+
+  function displayMessage(senderClass, senderName, text) {
+    const messagesDiv = document.getElementById("messages");
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message", senderClass);
+
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.innerText = senderClass === "user" ? "You" : responderInitial;
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.innerText = text;
+
+    messageDiv.appendChild(avatar);
+    messageDiv.appendChild(bubble);
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  function getResponse() {
+    if (conversationEnded) return;
+
+    const inputField = document.getElementById("userInput");
+    const input = inputField.value.trim();
+    if (!input) return;
+
+    displayMessage("user", "You", input);
+    inputField.value = "";
+
+    const lowerInput = input.toLowerCase();
+
+    if (["no", "nope", "nah", "nothing"].includes(lowerInput)) {
+      displayMessage("bot", responder, "Okay, feel free to reach out anytime. Have a great day!");
+      conversationEnded = true;
+      return;
+    }
+
+    if (lowerInput.includes("thank")) {
+      displayMessage("bot", responder, "You're welcome! Is there anything else I can help you with?");
+      waitingForFollowup = true;
+      return;
+    }
+
+    if (waitingForFollowup && ["yes", "yeah", "sure", "please"].includes(lowerInput)) {
+      displayMessage("bot", responder, "What can I help you with?");
+      waitingForFollowup = false;
+      return;
+    }
+
+    let matched = false;
+    for (const item of policyKeywords) {
+      for (const keyword of item.keywords) {
+        if (lowerInput.includes(keyword)) {
+          displayMessage("bot", responder, item.response);
+          matched = true;
+          break;
+        }
+      }
+      if (matched) break;
+    }
+
+    if (!matched) {
+      displayMessage("bot", responder, "I'm not sure about that. Try asking about leaves, supervision, safety, or wellness policies.");
+    }
+  }
+
+  document.getElementById("sendBtn").addEventListener("click", getResponse);
+  document.getElementById("userInput").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") getResponse();
+  });
+
+  window.onload = () => {
+    displayMessage("bot", responder, `Hi! My name is ${responder}, how can I help you today?`);
+  };
+</script>
+
+</body>
+</html>
+
+
+  <script>
+    
+  </script>
+</body>
+</html>
